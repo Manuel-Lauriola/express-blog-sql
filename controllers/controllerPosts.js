@@ -1,24 +1,15 @@
 //importo l'array
-const posts = require('../data/db.js')
+const connection = require('../data/db.js')
 
 //definisco la funzione che prenderà a carico la richiesta
 //index
 const index = (req, res) => {
-  //estraggo il parametro tag dalla query string col destructuring
-  const tag = req.query.tag
-  //inizializzo l'array 
-  let filteredPosts = posts
-  //se tag esiste
-  if (tag) {
-    //filtro l'array
-    filteredPosts = posts.filter(item => {
-      // Per ogni post creo un nuovo array di tag in minuscolo
-      const loweredTags = item.tags.map(tag => tag.toLowerCase())
-      //faccio il return dei post che includono il tag della query
-      return loweredTags.includes(tag.toLowerCase())
-    }
-  )}
-  res.json(filteredPosts)
+  const sql = "SELECT * FROM posts"
+
+  connection.query(sql, (err, results) => {
+    if (err) return res.status(500).json({ error: "Errore durante l'esecuzione della query" + err })
+    res.json(results)
+  })
  }
 //show
 const show = (req, res) => {
